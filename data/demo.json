@@ -1,0 +1,1 @@
+{"synthetic":true,"workflows":[{"name":"Research workflow","category":"Company research","calls":10,"customerCents":100,"providerCents":100,"evidence":"operator-reported"},{"name":"Unclassified payments","category":"Unknown","calls":3,"customerCents":null,"providerCents":null,"evidence":"unlinked"}]}
