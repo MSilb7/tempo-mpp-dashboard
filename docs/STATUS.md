@@ -12,4 +12,4 @@
 
 ## Validation
 
-JSON parsing and JavaScript syntax checks are the initial checks. Production browser, ingestion and accounting tests remain to be implemented. Repository publication and Codex project relocation must be verified separately from local file creation.
+JSON parsing and `node --check app.js` passed. The public GitHub repository was created and the initial commit pushed to main. Production browser, ingestion and accounting tests remain to be implemented. The checkout has not been registered as a Codex project and this side chat has not been moved; add the folder through the Codex sidebar, then move this chat into that project.
