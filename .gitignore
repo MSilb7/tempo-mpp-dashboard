@@ -2,5 +2,18 @@
 .env
 .env.*
 !.env.example
-node_modules/
 .private/
+.local/
+node_modules/
+__pycache__/
+analytics/.cache/
+analytics/logs/
+
+# Local databases, acquired columnar data, and private key files
+*.duckdb
+*.duckdb.wal
+*.parquet
+*.sqlite
+*.sqlite3
+*.pem
+*.key

@@ -1,0 +1,10 @@
+{
+  "assertion_id": "synthetic-search-label-v1",
+  "service_id": "synthetic-service-a",
+  "category": "web_search",
+  "valid_from": "2026-01-02",
+  "valid_to": "2026-01-04",
+  "recorded_at": "2026-02-01T00:00:00+00:00",
+  "evidence_level": "operator-reported",
+  "source": "synthetic-operator-receipt"
+}
