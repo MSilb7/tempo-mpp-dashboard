@@ -4,7 +4,7 @@
 
 ## Current implementation
 
-Static HTML/CSS/JavaScript sketch consumes data/demo.json. All fixtures are synthetic; the UI must state this. No external network calls other than fetching the local fixture.
+Static HTML/CSS/JavaScript sketch consumes data/demo.json. All fixtures are synthetic; the UI must state this. No external network calls other than fetching the local fixture. `scripts/preview.py` binds to loopback and serves only the four synthetic UI assets, excluding ignored evidence and repository metadata.
 
 ## Ingestion implementation
 
@@ -16,7 +16,7 @@ The maintained next-stage architecture is [DATA_PLATFORM.md](DATA_PLATFORM.md): 
 
 The project workflow validates labels, rejects overlaps/conflicting ID reuse, commits labels with pending work, identifies affected historical dates, and explicitly calls SQLMesh restatement. SQLMesh handles dependent model execution; the FULL rolling model deliberately rebuilds its later windows. Raw analytical facts retain source mode and exact DECIMAL(38,0) amounts; label evidence is separate operator-reported/model-inferred provenance. The snapshot loader preserves original uint256 strings in evidence and rejects eligible values outside DECIMAL(38,0); aggregates also fail on overflow.
 
-Publication validates fact preservation, no join fanout and per-token total conservation. Immutable JSON artifacts and an atomic `latest.json` replacement separate successful publication from in-place model rebuilds. Failed runs leave changes pending for idempotent resume; local file locking serializes writes. There is no distributed/cloud transaction, production state database, generic assertion resolver, retraction workflow yet. Verified snapshots are now bridged through analytics/snapshots.py; [analytics/README.md](../analytics/README.md) is the executable runbook.
+Publication validates fact preservation, no join fanout and per-token total conservation. It also checks current temporal label/provenance assignments and independently recomputes every daily/rolling metric using Python integer arithmetic and sets (`analytics/audits.py`), preventing stale categories, distinct counts or rolling windows from passing merely because totals match. Immutable JSON artifacts and an atomic `latest.json` replacement separate successful publication from in-place model rebuilds. Failed runs leave changes pending for idempotent resume; local file locking serializes writes. There is no distributed/cloud transaction, production state database, generic assertion resolver, retraction workflow yet. Verified snapshots are now bridged through analytics/snapshots.py; [analytics/README.md](../analytics/README.md) is the executable runbook.
 
 The independent Node.js 22+ command is `scripts/ingest.mjs`. `lib/tempo.mjs` handles decoding/normalization; `lib/ingest.mjs` handles acquisition. No dependencies were introduced. `scripts/demo-ingestion.mjs` exercises the same pipeline with synthetic in-process RPC fixtures.
 

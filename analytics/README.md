@@ -71,7 +71,7 @@ The fixture label was recorded February 1 but applies January 2 through January 
 - `latest.json`: atomically replaced after built-in and application audits succeed. **This is the serving boundary.** Restatement is not an atomic multi-model update; never expose live internal tables during it.
 - `writer.lock`: local process serialization (Unix `fcntl`; not a distributed/cloud lock).
 
-Failures leave work pending and preserve the prior publication. Resume reruns the affected interval and publishes only after conservation/identity audits pass. A crash after publication but before queue acknowledgment is safe to retry. Immutable artifacts plus atomic replacement protect against process interruption, but power-loss/fsync durability and cloud object-store transactions are not claimed.
+Failures leave work pending and preserve the prior publication. Resume reruns the affected interval and publishes only after conservation/identity, label/provenance and independently recomputed daily/rolling audits pass. A crash after publication but before queue acknowledgment is safe to retry. Immutable artifacts plus atomic replacement protect against process interruption, but power-loss/fsync durability and cloud object-store transactions are not claimed.
 
 Amounts use DECIMAL(38,0), including a fixture above JavaScript's safe-integer boundary. Overflow fails rather than falling back to float. Full uint256 strings are preserved in snapshot/movement evidence; analytical tables accept only checked DECIMAL(38,0) values. The demo bootstrap remains fixture-only; use load-snapshot in a separate directory for acquired live data.
 

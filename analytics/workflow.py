@@ -15,6 +15,7 @@ from pathlib import Path
 import duckdb
 from sqlmesh import Context
 
+from analytics.audits import audit_models
 from analytics.config import make_config
 from analytics.schema import create_raw
 
@@ -97,6 +98,7 @@ def publish(home):
         """).fetchone()[0]
         if mismatch:
             raise ValueError("Raw fact preservation audit failed")
+        audit_models(db, rows)
         payload = {"schema_version": 1, "synthetic": True,
             "coverage": {"from": "2026-01-01", "through": END, "scope": "synthetic fixture only"},
             "labels": rows(db, "SELECT * FROM raw.service_labels ORDER BY assertion_id"),

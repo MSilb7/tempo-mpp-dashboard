@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from analytics.workflow import PROJECT, connect, ingest_label, init_demo, publish, resume, validate_label
+from analytics.workflow import PROJECT, connect, ingest_label, init_demo, publish, resume, validate_label, enqueue
 
 LABEL = json.loads((PROJECT / "fixtures/historical_label.json").read_text())
 
@@ -70,6 +70,35 @@ class LabelWorkflowTest(unittest.TestCase):
             self.assertEqual([r for r in final["daily"] if r["category"] == "web_search"], known)
             self.assertEqual([r["amount_atomic"] for r in final["daily"] if r["category"] == "enrichment"], ["500"])
             self.assertIsNone(resume(home))
+
+    def test_publication_rejects_stale_labels_and_corrupt_aggregates(self):
+        with tempfile.TemporaryDirectory(prefix="tempo-audit-") as directory:
+            home = Path(directory)
+            init_demo(home)
+            published = (home / "latest.json").read_bytes()
+            enqueue(home, LABEL)  # Source changed, but models have not rebuilt yet.
+            with self.assertRaisesRegex(ValueError, "Label/provenance"):
+                publish(home)
+            self.assertEqual((home / "latest.json").read_bytes(), published)
+            resume(home)
+            published = (home / "latest.json").read_bytes()
+            # Views with corrupt outputs simulate stale/incorrect materializations.
+            for model, column in [('daily_metrics', 'active_payers'),
+                                  ('daily_metrics', 'category'),
+                                  ('rolling_7d', 'payment_count')]:
+                with self.subTest(model=model, column=column):
+                    with connect(home) as db:
+                        original = db.execute("SELECT sql FROM duckdb_views() WHERE schema_name='tempo' AND view_name=?", [model]).fetchone()[0]
+                        db.execute(f"CREATE TEMP TABLE saved AS SELECT * FROM tempo.{model}")
+                        value = "'wrong_category'" if column == 'category' else f"{column}+1"
+                        db.execute(f"CREATE OR REPLACE VIEW tempo.{model} AS SELECT * REPLACE ({value} AS {column}) FROM saved")
+                        # Keep the connection alive for the temporary backing table.
+                        with patch('analytics.workflow.connect') as mocked:
+                            mocked.return_value.__enter__.return_value = db
+                            with self.assertRaisesRegex(ValueError, model):
+                                publish(home)
+                        db.execute(original.replace("CREATE VIEW", "CREATE OR REPLACE VIEW", 1))
+                    self.assertEqual((home / "latest.json").read_bytes(), published)
 
     def test_invalid_assertions_cannot_become_chain_facts(self):
         for update in ({"evidence_level": "chain-verified"}, {"valid_to": "2026-01-01"},

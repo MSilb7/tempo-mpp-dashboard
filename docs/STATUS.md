@@ -35,6 +35,8 @@ User selected SQLMesh with DuckDB, prioritizing frequent historical label backfi
 
 ## Validation
 
+PR review: fixed stale label/aggregate publication gaps and repository-root preview exposure. Local validation now includes 9 Python and 17 Node tests. A read-only GitHub Actions workflow runs dependency installation, synthetic tests and the offline walkthrough on PRs and `main`; consult its run for remote status.
+
 Onboarding follow-up: new offline walkthrough passed in fresh warehouses, including byte-identical repeat publication and label/backfill/resume. All 17 Node and 7 Python tests passed again; documentation file links, demo JSON, app syntax and diff whitespace checks passed. Diagrams are Mermaid source (not render-tested).
 
 Snapshot follow-up: 7 Python tests pass (3 existing plus 4 snapshot integration tests); 17 Node tests pass. Verified exact reruns, overlapping selections, later observations, earlier/later history, source-only labels on imported fingerprints, population filtering, >JS-safe integer precision, empty MPP populations, altered metadata, conflicting canonical evidence, decimal overflow, mode isolation and failed-publication resume. Saved live sample in ignored `.local/live-analytics`: six retained movements, one primary MPP payment; exact reimport leaves publication bytes unchanged. No new RPC or paid requests were needed. Snapshot replay is an as-acquired consistency check, not fresh finality verification.
@@ -43,4 +45,4 @@ Python integration suite passed (3 tests), including actual SQLMesh source-only 
 
 `node --test test/*.test.mjs` passed (17 tests). Offline ingestion, demo JSON parsing and JavaScript syntax checks passed. Committed-code test fixtures are synthetic. Live anonymous probes: SQL indexer returned 402 (stopped, no payment); transfers REST returned 200; RPC chain ID matched. New discovery CLI found two candidate transactions in a fixed two-block sample; receipt CLI verified both into six canonical movements. Local snapshots remain ignored in `.local/` and are not publishable fixtures. This validates a small sample, not history completeness or indexer scale. No paid jobs, private records or transactions were used. Production browser validation remains outstanding; UI unchanged.
 
-This implementation is prepared on `codex/ingestion-sqlmesh-onboarding` for PR review against `main`. The onboarding clone command selects that branch until merge. No deployment or cloud provisioning is included. Remote publication is verified separately at push time.
+Implementation and review are tracked in [PR #1](https://github.com/MSilb7/tempo-mpp-dashboard/pull/1). The walkthrough targets `main` for the merged result. No deployment or cloud provisioning is included.

@@ -7,7 +7,7 @@ Read this guide, then [system diagrams](ARCHITECTURE.md) and [current state](STA
 ## 1. Prepare a checkout
 
 ```sh
-git clone --branch codex/ingestion-sqlmesh-onboarding https://github.com/MSilb7/tempo-mpp-dashboard.git
+git clone --branch main https://github.com/MSilb7/tempo-mpp-dashboard.git
 cd tempo-mpp-dashboard
 node --version
 python3.13 --version
@@ -15,7 +15,7 @@ python3.13 -m venv .local/venv
 .local/venv/bin/python -m pip install -r analytics/requirements.lock.txt
 ```
 
-The command checks out the feature branch while its PR is awaiting merge. After merge, the default branch can be used.
+The command checks out `main`. The preview binds only to loopback and serves an explicit allowlist of synthetic UI assets; repository files and `.local/` are inaccessible.
 
 Use Node.js 22+ and Python 3.13 on macOS/Linux (the writer lock uses Unix `fcntl`; native Windows is not supported). Python dependencies are pinned; Node has no dependencies or build step. Initial installation needs package-network access. Subsequent examples are offline. Run all commands from the repository root. The checkout must contain `analytics/` and `scripts/`; see STATUS for remote synchronization status.
 
@@ -62,10 +62,10 @@ node --test test/*.test.mjs
 .local/venv/bin/python -m unittest discover -s analytics/tests -v
 python3 -m json.tool data/demo.json > /dev/null
 node --check app.js
-python3 -m http.server 8000
+python3 scripts/preview.py
 ```
 
-Open http://localhost:8000. The browser reads `data/demo.json`, not your new SQLMesh publication; the serving adapter is future work. Stop the server with Ctrl-C. Tests use synthetic fixtures; the current Python stack may emit a non-fatal dateparser deprecation warning.
+Open http://127.0.0.1:8000. The browser reads `data/demo.json`, not your new SQLMesh publication; the serving adapter is future work. Stop the server with Ctrl-C. Tests use synthetic fixtures; the current Python stack may emit a non-fatal dateparser deprecation warning.
 
 ## 5. Move to acquired public data
 
@@ -82,7 +82,8 @@ This loader performs an offline consistency replay, not a new finality check. Ke
 | Symptom | Action |
 | --- | --- |
 | Demo directory already initialized | Choose a fresh `--home`; initialization deliberately refuses overwrite. |
-| Build/publication failed | Run `resume` against the same home; inspect the error. Previous successful publication remains available. |
+| Snapshot import or label build/publication failed | Run `resume` against the same home; inspect the error. Previous successful publication remains available. |
+| Initial `init-demo` failed | Use a fresh demo directory; bootstrap has no pending label work to resume. |
 | Synthetic/live mode mismatch | Create a separate warehouse; never merge modes. |
 | Existing payment has conflicting block/receipt evidence | Stop and investigate canonicality; automatic reorg reconciliation is not implemented. |
 | Label overlap or reused ID with different contents | Correct the submission design; retractions/supersession are not implemented. |

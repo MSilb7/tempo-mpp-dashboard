@@ -40,7 +40,7 @@ This is an explicit transaction sample, **not a block-range indexer**. Coverage 
 
 ## Preview
 
-Run `python3 -m http.server 8000` in this directory and open http://localhost:8000.
+Run `python3 scripts/preview.py` in this directory and open http://127.0.0.1:8000.
 
 ## SQLMesh + DuckDB pilot
 
