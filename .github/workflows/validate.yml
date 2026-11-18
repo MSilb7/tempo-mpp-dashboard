@@ -1,0 +1,44 @@
+name: Validate
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  offline-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Install pinned analytics dependencies
+        run: |
+          python -m venv .local/venv
+          .local/venv/bin/python -m pip install -r analytics/requirements.lock.txt
+          .local/venv/bin/python -m pip check
+      - name: Validate synthetic prototype and ingestion
+        run: |
+          python -m json.tool data/demo.json > /dev/null
+          node --check app.js
+          node --test test/*.test.mjs
+          node scripts/demo-ingestion.mjs
+      - name: Validate analytics and preview boundaries
+        run: .local/venv/bin/python -m unittest discover -s analytics/tests -v
+      - name: Exercise onboarding and repeat import
+        run: |
+          .local/venv/bin/python -m analytics.cli --home .local/ci-snapshots load-snapshot .local/synthetic-ingestion.json
+          cp .local/ci-snapshots/latest.json .local/before.json
+          .local/venv/bin/python -m analytics.cli --home .local/ci-snapshots load-snapshot .local/synthetic-ingestion.json
+          cmp .local/before.json .local/ci-snapshots/latest.json
+          .local/venv/bin/python -m analytics.cli --home .local/ci-labels init-demo
+          .local/venv/bin/python -m analytics.cli --home .local/ci-labels add-label analytics/fixtures/historical_label.json
+          .local/venv/bin/python -m analytics.cli --home .local/ci-labels resume

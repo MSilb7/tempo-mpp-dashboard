@@ -9,6 +9,22 @@ Make MPP payment flows understandable while exposing the limits of public eviden
 - Public repository named tempo-mpp-dashboard.
 - Evidence levels: chain-verified, operator-reported, model-inferred.
 - Public-chain analytics and published-workflow analytics must remain distinguishable.
+- Prioritize ingestion, data modeling and storage before dashboard UX (2026-11-18).
+- Primary v1 population: MPP-tagged transfers; broader Tempo activity is a separately labeled comparison.
+- V1 UI can be simple metric cards/charts with date, cadence and segment controls. Detailed UX comes later.
+- Use SQLMesh with DuckDB initially; expect AI-assisted development and frequent historical label backfills. SQLMesh learning is welcome; dbt familiarity is not a deciding constraint.
+
+## Analytics requirements
+
+Support transaction and payment-transfer counts, exact payment volume, unique payers/services/operators, per-day or per-period threshold-qualified entities, and daily/weekly/monthly acquisition, retention, resurrection and churn. Filters include token, payer spend tier, observed payer/operator tenure and evolving service categories. Addresses are not people; services are not necessarily operators.
+
+Use a stable typed fact core plus extensible, sourced and time-versioned attributes/relationships. Structured views/materializations expose well-defined metrics without unbounded schema changes or multi-valued join fanout. [Metric contract](METRICS.md) defines proposed cadence, threshold, cohort, valuation and segment rules. [Data platform plan](DATA_PLATFORM.md) compares tools and specifies storage/model grains. These proposed defaults and stack choices are not all confirmed user decisions.
+
+## Client and interface attribution
+
+User-confirmed scope addition: distinguish originating interface, intermediary/orchestrator, purchased service/operator and payment SDK/wallet. A known Mercator/service/SDK identity must never fill an unknown interface by assumption. Preserve raw client/server fingerprints and absent, unresolved or conflicting mapping states. Attribute at payment/request-leg granularity with evidence level, source, effective dates and mapping version; expose interface attribution coverage among eligible transfers and volume, including unknowns.
+
+Current implementation retains client fingerprints and displays interface unknown; no public client mapping has been established. Research population rates, public IDs/registries, role meanings and published leg-level operator receipts. Longer-term interest is an orderflow-inspired origin -> orchestration -> service -> fulfillment visualization. Model evidenced edges and unknown stages; settlement alone proves neither routing nor fulfillment. This is future UX, not a replacement for the data work.
 
 ## Proposed first release
 
@@ -22,10 +38,22 @@ Make MPP payment flows understandable while exposing the limits of public eviden
 
 Expose gross transfer volume separately from customer charges and provider spending. Count one economic transfer once even if both Transfer and TransferWithMemo logs describe it. Unknown payment roles remain unknown.
 
+## First implementation slice
+
+Implementation scope (2026-11-18): the first ingestion slice accepts explicit public transaction hashes and a native TIP-20 token allowlist. Bounded block-window candidate discovery is implemented; UI integration remains next. This selected sample is not chain-wide MPP coverage. Memo fingerprints do not prove domain ownership, workflow membership or delivery. Custom/no-memo transfers retain unknown attribution. Gross volume includes any fee/refund transfers selected; mint/burn are separate. Customer/provider spending remains unavailable until role evidence exists. No use-case shares can be derived from this slice.
+
+## Label backfill slice
+
+The first local SQLMesh pilot now reclassifies historical synthetic service activity via a sourced label without modifying model SQL. Daily and seven-day rolling category metrics are restated and published only after raw-fact/volume conservation checks. The narrow category-label workflow is implemented; generic attributes, operator identity and broader growth/cohort metrics remain planned. Verified ingestion JSON now loads into isolated SQLMesh warehouses with explicit selected-sample coverage and source provenance.
+
 ## Non-goals for the first release
 
 Global user counts, unqualified revenue estimates, inferred private prompts, paid API execution, or claims that payment proves research delivery.
 
+## Paid source preference
+
+User is open to using their MPP account for valuable gated data. Evaluate source coverage, cost, account integration and reuse/publication rights; this is not an unspecified spending authorization. Free/synthetic validation remains the default.
+
 ## Open decisions
 
-Hosting, production framework, indexer backend, historical start block, registry verification and public receipt licensing/retention. The dependency-free sketch does not settle those choices.
+Cloud account/budget, freshness target, historical start block, spend-tier boundaries, valuation sources, registry verification and public receipt licensing/retention. Proposed stack is Tempo REST/RPC, R2/Parquet, DuckDB with user-selected SQLMesh and small serving marts; SQLMesh/DuckDB dependencies are installed for the local synthetic pilot, while cloud resources remain unprovisioned. The dependency-free sketch does not settle those choices.
