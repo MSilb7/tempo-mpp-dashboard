@@ -42,7 +42,7 @@ BigInt atomic amounts serialize as decimal strings. Totals remain per chain/toke
 
 ## Coverage and trust boundaries
 
-Coverage records explicit selection, allowlist, receipt count and observed block span. `completeForSelection` does not imply `completeForBlockRange`; chain population and workflow denominators are null. Selection/publication bias is explicit. The RPC is trusted for correctness/completeness, including potentially omitted logs: consistency checks cannot prove every log was returned. Network upgrade behavior, persistent reorg handling, checkpoints and independent-provider validation remain future work. UI integration must expose these qualifications.
+Coverage records explicit selection, allowlist, receipt count and observed block span. `completeForSelection` does not imply `completeForBlockRange`; chain population and workflow denominators are null. Selection/publication bias is explicit. The RPC is trusted for correctness/completeness, including potentially omitted logs: consistency checks cannot prove every log was returned. Network upgrade behavior, persistent reorg handling and independent-provider validation remain future work. Durable local acquisition checkpoints are implemented below. UI integration must expose these qualifications.
 
 ## Verified snapshot boundary
 
@@ -66,3 +66,10 @@ Tempo RPC/indexer -> raw receipts/logs -> canonical transfers -> MPP memo decode
 Preserve raw evidence, acquisition time and source. Use integer token units; never floating-point accounting. Normalize duplicate event representations without discarding provenance. Handle pagination, retries, reorgs and finality before claiming complete coverage.
 
 Operator signatures establish attributable assertions, not truth of delivered work. HTTP challenge references can bind a known challenge to a payment; they do not automatically join separate upstream and downstream purchases.
+
+
+## Durable bounded acquisition
+
+`analytics/ingestion.py` uses a separate SQLite checkpoint database and the existing local writer lock. It registers immutable jobs and fixed inclusive windows, commits each completed discovery result with deterministic receipt-batch selections, fsyncs content-addressed snapshots before storing their references, then imports through `load_snapshot`. Imported acknowledgment follows successful model publication; replay after an intervening crash is safe. Discovery interrupts restart the current window; receipt interrupts repeat only an uncheckpointed batch. The range-end block hash is pinned and rechecked on pending-job resume. Explicit observation keys permit later rescans of an identical interval without conflating them with retries.
+
+Status queries use a read-only SQLite transaction without the acquisition writer lock, so progress remains inspectable during network/model work. The checkpoint ledger owns requested, empty and pending window coverage. Imported snapshots carry validated discovery context into SQLMesh manifests; neither layer claims provider or full-range completeness. Individual batches can publish before a whole job finishes. See [runbook and recovery diagram](INGESTION.md) for bounds, storage and failure semantics. Cloud execution requires durable shared storage, a cloud-safe single-writer strategy and scheduling; current filesystem paths/locks are local.

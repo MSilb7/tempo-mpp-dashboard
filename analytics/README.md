@@ -20,6 +20,8 @@ Create a fresh demo directory and apply the fixture label:
 
 Initialization refuses to overwrite an existing database. `resume` is a no-op when no changes are pending. The completed development demo is in ignored `.local/sqlmesh-demo/`. No cloud resources, wallets or paid data are involved. SQLMesh telemetry is disabled before Python API imports, and runtime state stays under `.local/`. The lockfile is a tested Python 3.13 environment; other Python/platform combinations require validation. The current dependency stack emits a dateparser deprecation warning on Python 3.13; tests pass.
 
+For end-to-end acquisition with durable discovery and receipt-batch checkpoints, use the [ingestion runbook](../docs/INGESTION.md). Standalone snapshot imports remain available below.
+
 ## Load verified ingestion data
 
 First generate `.local/verified.json` using the root README ingestion commands (it is not shipped with the repository). For a fully offline introduction, use [Start here](../docs/START_HERE.md). Use a new directory, separate from any synthetic/legacy demo:

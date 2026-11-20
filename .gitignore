@@ -17,3 +17,8 @@ analytics/logs/
 *.sqlite3
 *.pem
 *.key
+
+# SQLite checkpoint sidecars
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm

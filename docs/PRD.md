@@ -57,3 +57,12 @@ User is open to using their MPP account for valuable gated data. Evaluate source
 ## Open decisions
 
 Cloud account/budget, freshness target, historical start block, spend-tier boundaries, valuation sources, registry verification and public receipt licensing/retention. Proposed stack is Tempo REST/RPC, R2/Parquet, DuckDB with user-selected SQLMesh and small serving marts; SQLMesh/DuckDB dependencies are installed for the local synthetic pilot, while cloud resources remain unprovisioned. The dependency-free sketch does not settle those choices.
+
+
+## Confirmed cloud execution and enrichment scope — 2026-11-18
+
+The whole pipeline must be cloud-runnable: ingestion, public-code discovery/enrichment, storage, SQLMesh modeling/backfills, publication and dashboard serving. Codex is a development environment, not a production runtime dependency. Cloudflare is preferred; evaluate SQLMesh/DuckDB runtime compatibility and a suitable cloud container runner dispatched by Cloudflare if needed. This is required future scope, not authorization to spend or a claim of deployment.
+
+Maintain a growing client-fingerprint reference table with exact UTF-8 clientId string, Keccak prefix, candidate identity, semantic role, immutable source revision/URL, supporting code context, production versus test/example usage, first-seen/last-checked times and review status. Payment tooling must remain separate from originating interface, intermediary/orchestrator and purchased service/operator. Preserve candidates, approved sourced mappings, conflicts, unknowns and version history; string/hash matches do not authenticate software.
+
+A recurring discovery job should find exact public identifiers, trace them into payment memo construction (excluding unrelated OAuth fields), hash and deduplicate candidates while retaining provenance, and queue review. Approved additions, corrections and retractions must flow into historical backfill/revalidation as assertion machinery evolves. Cloudflare is the preferred runner; trigger, queue, bounded inspection/hash work, storage and review/backfill orchestration remain product-selection/design work. No recurring job is deployed. The unresolved research fingerprint documented in EVIDENCE stays unresolved and its originating interface stays unknown.

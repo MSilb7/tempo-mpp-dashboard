@@ -8,6 +8,8 @@ The dashboard is a synthetic prototype. A separate dependency-free Node.js comma
 
 Follow the [offline onboarding walkthrough](docs/START_HERE.md), then read the [system diagrams](docs/ARCHITECTURE.md). The walkthrough generates its own data and exercises ingestion, rerun safety and historical label backfill. [Cloudflare readiness](docs/CLOUDFLARE.md) records verified connector access and the remaining deployment decisions.
 
+For bounded multi-window jobs with durable resume and automatic SQLMesh imports, see [durable ingestion and recovery](docs/INGESTION.md).
+
 ## Ingestion and tests
 
 Requires Node.js 22 or newer. No install or build step.

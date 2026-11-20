@@ -5,6 +5,7 @@ Immutable receipt evidence and acquisition observations are separate from facts.
 """
 import hashlib
 import json
+import re
 import subprocess
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -29,6 +30,32 @@ def validate(snapshot):
     acquired = datetime.fromisoformat(snapshot["acquiredAt"].replace("Z", "+00:00"))
     if acquired.utcoffset() is None:
         raise ValueError("Acquisition time must be timezone aware")
+    context = snapshot.get("discoveryContext")
+    if context is not None:
+        keys = {"job_id", "window_seq", "discovery_source", "from_block", "to_block", "discovered_at", "pages",
+                "api_rows", "candidate_transactions", "pagination_exhausted", "chain_completeness_verified"}
+        if not isinstance(context, dict) or set(context) != keys:
+            raise ValueError("Invalid discovery context")
+        if not isinstance(context["job_id"], str) or not re.fullmatch(r"[0-9a-f]{64}", context["job_id"]):
+            raise ValueError("Invalid checkpoint job identity")
+        limits = {"window_seq": (0, 999), "from_block": (0, 2**53-1), "to_block": (0, 2**53-1),
+                  "pages": (1, 20), "api_rows": (0, 1000), "candidate_transactions": (1, 100)}
+        if any(type(context[k]) is not int or not lo <= context[k] <= hi for k,(lo,hi) in limits.items()):
+            raise ValueError("Invalid discovery bounds or counts")
+        if not 0 <= context["to_block"]-context["from_block"] < 1000:
+            raise ValueError("Invalid discovery window")
+        if context["discovery_source"] != "https://api.tempo.xyz/v1/transfers":
+            raise ValueError("Unsupported discovery source")
+        if context["pagination_exhausted"] is not True or context["chain_completeness_verified"] is not False:
+            raise ValueError("Discovery cannot claim chain completeness")
+        discovered = datetime.fromisoformat(context["discovered_at"].replace("Z", "+00:00"))
+        if discovered.utcoffset() is None or discovered > acquired:
+            raise ValueError("Invalid discovery acquisition time")
+        if not len(snapshot["rawEvidence"]["receipts"]) <= context["candidate_transactions"] <= context["api_rows"]:
+            raise ValueError("Discovery count mismatch")
+        if any(not context["from_block"] <= int(r["blockNumber"],16) <= context["to_block"]
+               for r in snapshot["rawEvidence"]["receipts"]):
+            raise ValueError("Receipt outside discovery context")
     dates = []
     for block in snapshot["rawEvidence"]["blocks"]:
         at = datetime.fromtimestamp(int(block["timestamp"], 16), timezone.utc)
@@ -132,6 +159,8 @@ def load_snapshot(home, path):
                     db.executemany("INSERT OR IGNORE INTO raw.calendar VALUES (?)",
                         [(begin + timedelta(days=i),) for i in range((finish-begin).days+1)])
                     manifest = {k: snapshot[k] for k in ("schemaVersion", "synthetic", "acquiredAt", "source", "chainId", "coverage", "finality")}
+                    if "discoveryContext" in snapshot:
+                        manifest["discovery_context"] = snapshot["discoveryContext"]
                     manifest["snapshot_id"] = digest
                     manifest["evidence_path"] = f"snapshots/{digest}.json"
                     db.execute("INSERT INTO raw.snapshots VALUES (?,?,?,?, 'pending',NULL)",

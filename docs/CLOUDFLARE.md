@@ -15,3 +15,12 @@ Before implementation:
 5. Add narrowly scoped bindings/credentials, deployment configuration, rollback and monitoring. Verify current product limits against official documentation during that implementation.
 
 No Cloudflare access is required to [get started locally](START_HERE.md). Connector setup is specific to the current user's client; teammates need their own authorized access if they later operate cloud resources. No credentials belong in source control.
+
+
+## Cloud runner research handoff — 2026-11-20
+
+A user-authorized side-chat identified Cloudflare Containers as a candidate native Linux runner and proposed a portable `linux/amd64` image. This has not been tested or selected. The next spike should run the existing label/backfill and interruption/overlap tests in a container, then compare durable storage before deploying. Ordinary Python Workers must not be assumed to support the current native dependency stack.
+
+Research leads to validate: [Container architecture](https://developers.cloudflare.com/containers/concepts/architecture/), [R2 mounts](https://developers.cloudflare.com/containers/examples/r2-fuse-mount/), [SQLMesh DuckDB state guidance](https://sqlmesh.readthedocs.io/en/stable/integrations/engines/duckdb/), [MotherDuck integration](https://sqlmesh.readthedocs.io/en/stable/integrations/engines/motherduck/) and [DuckLake compatibility](https://ducklake.select/docs/stable/duckdb/introduction). Compare serialized restore/upload of closed DuckDB checkpoints, a durable analytical backend, and a cloud runner with persistent disk. Do not assume an ephemeral container, R2 mount or local file lock provides durable shared database semantics. An external SQLMesh state database must not advance intervals beyond durably stored warehouse results. D1 and Hyperdrive must not be assumed to supply a supported PostgreSQL state backend.
+
+These are research candidates and failure-mode considerations, not a backend decision, version upgrade, benchmark or authorization to provision paid infrastructure. Preserve the last good publication while validating replacement results and cloud-safe single-writer coordination.
