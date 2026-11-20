@@ -77,6 +77,8 @@ Follow [README ingestion commands](../README.md#ingestion-and-tests) to select b
 
 This loader performs an offline consistency replay, not a new finality check. Keep live data separate from both demo and synthetic snapshot warehouses. HTTP 402/429 stops discovery; do not pay or bypass limits. Do not commit acquired snapshots. Cloud deployment is separate; see [Cloudflare readiness](CLOUDFLARE.md).
 
+For repeated or larger bounded acquisitions, use [durable checkpoints](INGESTION.md) to register windows, resume interrupted batches and track incomplete coverage.
+
 ## Common recovery cases
 
 | Symptom | Action |

@@ -6,6 +6,10 @@
 
 [Start here](START_HERE.md) runs ingestion, repeat import and historical labeling entirely offline; [system diagrams](ARCHITECTURE.md) show current boundaries and proposed cloud deployment. Cloudflare authenticated account/R2/D1/Workers read probes succeeded on 2026-11-18; nothing was provisioned. See [Cloudflare readiness](CLOUDFLARE.md). A side-chat convenience sample found nonzero client fingerprints in 5/14 selected MPP payments, but established originating interface in 0/14; this is research evidence, not a population estimate or implemented resolver.
 
+## Current checkpoint work
+
+Durable bounded acquisition now registers fixed windows in SQLite, checkpoints discovery and verified receipt batches, and imports them through SQLMesh. It resumes after interruption and supports overlapping jobs or explicit observation-key rescans without duplicating canonical payments. Requested/empty/pending windows remain visible in the checkpoint ledger; imported discovery provenance travels into publications. See [ingestion and recovery](INGESTION.md). This follow-up is prepared on `codex/durable-ingestion-checkpoints` for PR review; PR #1 is the preceding baseline. No new live acquisition or cloud deployment was performed.
+
 ## Implemented
 
 - Bounded read-only receipt ingestion: at most 100 transaction hashes and 20 native TIP-20 tokens, expected-chain/finality checks, block membership/hash checks, final canonical-hash rechecks, bounded retries/timeouts/response sizes.
@@ -27,13 +31,17 @@ User selected SQLMesh with DuckDB, prioritizing frequent historical label backfi
 
 ## Next steps
 
-1. Extend the implemented local snapshot manifests/idempotent loader with durable discovery interval checkpoints and provider completeness reconciliation before claiming range coverage.
+1. Reconcile provider completeness and measure bounded live throughput using the implemented checkpoints before claiming range coverage. Add adaptive dense-window acquisition and distributed checkpoint persistence as scale requires.
 2. Extend the connected analytics layer beyond checked DECIMAL(38) limits as needed, and optimize conservative full-span snapshot restatements. Extend narrow category labels to temporal attributes/relationships, explicit supersession/retractions and conflict resolution; retain the tested source-change restatement workflow.
 3. Build/test the metric contract with synthetic multi-period histories before exposing charts. Resolve initial history, freshness, valuation and spend-tier policies; no invented budget.
 4. Measure sample throughput/storage before broad backfill or Cloudflare provisioning. Evaluate cryo only with throttled bounded compatibility checks; hosted SQL currently returned 402.
-5. Add registry/operator enrichment and evidence-aware serving views, then minimal dashboard controls. Revalidate virtual-address/guarded-transfer support before expanding normalization.
+5. Design the user-required cloud execution for the entire pipeline (Cloudflare preferred; evaluate cloud container compute for SQLMesh/DuckDB). Build the reviewed public-code client reference/discovery workflow, preserving payment-tooling versus interface roles, then evidence-aware serving and minimal dashboard controls. Revalidate virtual-address/guarded-transfer support before expanding normalization.
 
 ## Validation
+
+Checkpoint review adds nonblocking, read-only status inspection and sanitized RPC URL errors, with regression tests. Current local validation passes 19 Node and 16 Python tests. The PR and its final CI run are the remote verification record.
+
+Durable-checkpoint follow-up: 19 Node and 14 Python tests pass, including hard process exit after publication, discovery/acquisition/import interruption, overlap and explicit rescans, empty/pending coverage, metadata validation, source/reorg rejection and snapshot corruption. Live acquisition was not run. Documentation links, CLI help, offline fixture generation, JSON/syntax and whitespace checks passed.
 
 PR review: fixed stale label/aggregate publication gaps and repository-root preview exposure. Local validation now includes 9 Python and 17 Node tests. A read-only GitHub Actions workflow runs dependency installation, synthetic tests and the offline walkthrough on PRs and `main`; consult its run for remote status.
 

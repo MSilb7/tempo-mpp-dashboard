@@ -27,6 +27,8 @@ flowchart TD
 
 There is currently **no edge from publication to browser**. Node checks as-acquired finality and receipt/block consistency. Replay checks that saved derived data agrees with saved evidence; neither step supplies cryptographic proofs or complete-chain coverage. A separate warehouse per source mode prevents live/synthetic mixing.
 
+The [durable acquisition coordinator](INGESTION.md) now checkpoints discovery windows and receipt batches in SQLite, then invokes this same snapshot/SQLMesh boundary. Its ledger includes empty and unfinished windows; publication provenance includes imported windows only.
+
 ## Logical storage relationships
 
 ```mermaid

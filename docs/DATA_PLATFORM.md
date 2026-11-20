@@ -38,7 +38,7 @@ User is open to using their MPP account for valuable gated data (2026-11-18). Pa
 5. Reconcile completed coverage intervals against indexer lag/backfill gaps. Cursor exhaustion means exhausted API results, not proven chain completeness. Retry missing intervals later. Publish a watermark with gaps and token universe; mark partial periods.
 6. Reorg/correction creates a new snapshot/model version. Invalidate downstream entity-days, affected periods and first-observed history; never silently append a replacement transfer into totals. Publication switches a manifest pointer only after audits pass.
 
-Steps 1–3 have a bounded manual path. Durable checkpoints, manifests, range completeness audits and scheduled execution are not implemented. The command keeps discovery metadata in its separate file; an ingested discovery file still produces receipt-selection coverage, not range-complete coverage. The broad-Tempo comparison currently covers only the selected receipts/tokens, not all Tempo transfers.
+Steps 1–3 have a bounded manual path and a durable local coordinator. SQLite window/batch checkpoints and immutable snapshot manifests are implemented; range completeness audits and scheduled execution remain future work. Standalone commands keep discovery metadata in a separate file; the coordinator carries discovery context into imported manifests. Both paths still produce receipt-selection coverage, not range-complete coverage. The broad-Tempo comparison currently covers only the selected receipts/tokens, not all Tempo transfers.
 
 ## Storage layers and keys
 
@@ -94,7 +94,7 @@ This permits arbitrarily many registered attributes without repeated table alter
 `analytics/` now provides a local DuckDB fixture store, sourced interval labels, a pending/applied change queue, three native SQLMesh models and immutable JSON publications. Source-only label changes explicitly restate history and downstream daily/rolling metrics. This is a narrow category-label slice, not yet the generic attribute design or R2/Parquet persistence. A verified-snapshot bridge now persists raw evidence, acquisition manifests, deduplicated MPP facts and observation links into isolated local warehouses. The first historical-label/retry/conservation acceptance cases pass.
 
 
-1. Extend the implemented immutable local snapshot store and idempotent loader with discovery checkpoints, coverage-gap reconciliation and explicit inclusion-replacement handling. Conflicting canonical evidence currently rejects imports.
+1. Extend the implemented immutable local snapshot store and idempotent loader with coverage-gap reconciliation and explicit inclusion-replacement handling; local discovery checkpoints are implemented. Conflicting canonical evidence currently rejects imports.
 2. Snapshot loading, exact checked values, duplicate-key protection and synthetic/live isolation now pass tests. Expand analytical types/metadata and scalable affected-interval rebuilds.
 3. Add time-versioned attribute/relationship definitions and resolution views; test conflicting assertions, supersession and as-of joins.
 4. Add models in METRICS.md with synthetic histories containing gaps, reactivation, threshold crossings and multiple tokens/services per operator. Run SQLMesh locally with pinned supported versions; validate source-data-only label changes and explicit historical restatement.
@@ -106,3 +106,10 @@ This permits arbitrarily many registered attributes without repeated table alter
 Keep clientFingerprint separate from serverFingerprint and distinguish originating interface, orchestrator/intermediary, service/operator and SDK/wallet entities. A client fingerprint is a payment-leg memo signal, not proof of UI or request origin. New namespaces should include interface, orchestration, service and payment-client roles, with dated sourced relationship assertions and explicit absent/unresolved/conflicting states. The implemented loader preserves fingerprints and marks interface unknown; mapping registries are not established. Coverage is measured over all eligible selected payments/volume, not only classified activity.
 
 Future journey visualizations must retain unknown origin/stage nodes and typed evidence edges: chain-observed payments versus operator-reported request/tool associations and delivery claims. Do not draw complete journeys by filling gaps with timing or counterparty guesses.
+
+
+## Cloud execution and client-reference workstream
+
+User-confirmed scope now requires the entire pipeline to run without a laptop or active Codex session. Cloudflare is preferred for scheduling and enrichment; select the actual queue/storage/compute products after checking SQLMesh and DuckDB compatibility. A cloud container runner dispatched by Cloudflare is an acceptable design candidate, not an implemented choice. The new SQLite/file-lock acquisition checkpoints are the local correctness baseline; shared persistence and single-writer coordination must be adapted for cloud operation.
+
+The future client reference is a temporal assertion catalog, not a replacement for immutable payment fingerprints. Store exact identifier bytes/spelling and derived fingerprint, candidate entity and role, source URL plus immutable revision/version, code-path evidence, production/test/example context, first-seen and last-checked times, review status and supersession/conflicts. Recurring bounded public-code discovery feeds candidates to review; approved mappings feed backfill/revalidation. Keep payment tooling, intermediary, purchased service/operator and originating interface distinct. Existing narrow service-category labels do not yet implement these mappings or retractions.
