@@ -111,3 +111,5 @@ Review identified that `status` acquired the long-lived writer lock and could bl
 The observed unresolved research fingerprint was omitted from the public documentation changes; public source-code examples and derived candidate hashes remain distinguished from acquired payment evidence. Source, tests and documentation only are intended for this PR; ignored live data, checkpoints, logs and warehouse files stay local.
 
 Review validation: 19 Node and 16 Python tests pass, including the new concurrent status and RPC-redaction regressions. Offline ingestion, JSON/syntax checks, `pip check`, documentation file links and diff checks pass. File inventory excludes runtime artifacts; credential-pattern matches are intentional synthetic rejection-test URLs only.
+
+Remote publication and final CI/merge status are tracked in [PR #2](https://github.com/MSilb7/tempo-mpp-dashboard/pull/2).

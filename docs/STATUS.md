@@ -8,7 +8,7 @@
 
 ## Current checkpoint work
 
-Durable bounded acquisition now registers fixed windows in SQLite, checkpoints discovery and verified receipt batches, and imports them through SQLMesh. It resumes after interruption and supports overlapping jobs or explicit observation-key rescans without duplicating canonical payments. Requested/empty/pending windows remain visible in the checkpoint ledger; imported discovery provenance travels into publications. See [ingestion and recovery](INGESTION.md). This follow-up is prepared on `codex/durable-ingestion-checkpoints` for PR review; PR #1 is the preceding baseline. No new live acquisition or cloud deployment was performed.
+Durable bounded acquisition now registers fixed windows in SQLite, checkpoints discovery and verified receipt batches, and imports them through SQLMesh. It resumes after interruption and supports overlapping jobs or explicit observation-key rescans without duplicating canonical payments. Requested/empty/pending windows remain visible in the checkpoint ledger; imported discovery provenance travels into publications. See [ingestion and recovery](INGESTION.md). Implementation and review are tracked in [PR #2](https://github.com/MSilb7/tempo-mpp-dashboard/pull/2); PR #1 is the preceding baseline. No new live acquisition or cloud deployment was performed.
 
 ## Implemented
 
@@ -53,4 +53,4 @@ Python integration suite passed (3 tests), including actual SQLMesh source-only 
 
 `node --test test/*.test.mjs` passed (17 tests). Offline ingestion, demo JSON parsing and JavaScript syntax checks passed. Committed-code test fixtures are synthetic. Live anonymous probes: SQL indexer returned 402 (stopped, no payment); transfers REST returned 200; RPC chain ID matched. New discovery CLI found two candidate transactions in a fixed two-block sample; receipt CLI verified both into six canonical movements. Local snapshots remain ignored in `.local/` and are not publishable fixtures. This validates a small sample, not history completeness or indexer scale. No paid jobs, private records or transactions were used. Production browser validation remains outstanding; UI unchanged.
 
-Implementation and review are tracked in [PR #1](https://github.com/MSilb7/tempo-mpp-dashboard/pull/1). The walkthrough targets `main` for the merged result. No deployment or cloud provisioning is included.
+The initial ingestion/SQLMesh implementation and review are tracked in [PR #1](https://github.com/MSilb7/tempo-mpp-dashboard/pull/1). The walkthrough targets `main` for the merged result. No deployment or cloud provisioning is included.
