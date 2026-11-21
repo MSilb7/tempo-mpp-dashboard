@@ -1,5 +1,7 @@
 # Tempo MPP Dashboard
 
+For the opt-in MotherDuck adapter, portable container and offline benchmark harness, see the [runner runbook](docs/RUNNER.md). Local DuckDB remains the default; remote execution and provisioning are not enabled.
+
 Explore machine-payment activity without confusing settled transfers with workflow purpose.
 
 The dashboard is a synthetic prototype. A separate dependency-free Node.js command ingests bounded, read-only Tempo receipts; its output is not yet connected to the UI. No operator integration is connected.

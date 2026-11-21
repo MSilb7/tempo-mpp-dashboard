@@ -86,11 +86,29 @@ SQLMesh does not poll external labels for this workflow. The wrapper owns source
 flowchart LR
     SRC[Public sources] -.-> JOB[Scheduled Python and Node compute]
     JOB -.-> OBJ[R2 evidence and versioned artifacts]
-    JOB -.-> MODEL[SQLMesh and DuckDB execution]
+    JOB -.-> MODEL[Portable SQLMesh Linux container]
+    MODEL -.-> MD[MotherDuck Lite - selected v1 backend]
+    MD -.-> GATE
     MODEL -.-> GATE[Audits and approved public projection]
     GATE -.-> SERVE[Aggregate serving storage]
     SERVE -.-> API[Worker API or static serving]
     API -.-> DASH[Dashboard]
 ```
 
-R2, an optional D1 serving layer, and Workers are candidates, not deployed components. Compute, scheduling, production SQLMesh state, locking, backups and publication policy must be selected before implementation. Do not treat an object-store DuckDB file as a shared writable database. Full local publications include evidence; a separate approved public projection is required before publishing. See [Cloudflare readiness](CLOUDFLARE.md).
+MotherDuck Lite is the selected v1 analytical backend. Its connection adapter and portable container definition are implemented, but remote connectivity and image execution are unverified; see [runner runbook](RUNNER.md). [Backend decision](BACKEND_DECISION.md) defines its benchmark and portability gates. R2, an optional D1 serving layer, and Workers remain proposed surrounding components, not deployed infrastructure. Compute, scheduling, production SQLMesh state, locking, backups and publication policy must be selected before implementation. Do not treat an object-store DuckDB file as a shared writable database. Full local publications include evidence; a separate approved public projection is required before publishing. See [Cloudflare readiness](CLOUDFLARE.md).
+
+## Implemented portable execution boundary
+
+```mermaid
+flowchart LR
+    CLI[Workflow / snapshot loader / benchmark] --> Adapter[Backend configuration + home binding]
+    Adapter --> Local[Local DuckDB: default, tested]
+    Adapter -. explicit opt-in .-> MD[MotherDuck: real connection unverified]
+    CLI --> Mesh[SQLMesh: shared DuckDB SQL]
+    Mesh --> State[Local state or optional PostgreSQL configuration]
+    Mesh --> Audit[Independent publication audits]
+    Audit --> Files[Versioned JSON + last-good pointer]
+    Image[Portable Python + Node image definition] -. packages .-> CLI
+```
+
+Dotted remote paths require acceptance before deployment. A home binding prevents accidentally switching targets; it is not a cloud lock. Local files, acquisition checkpoints and publication artifacts still need durable storage. No remote or paid execution is enabled by default.

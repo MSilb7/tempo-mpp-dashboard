@@ -2,6 +2,8 @@
 
 Decision confirmed by user on 2026-11-18: SQLMesh with DuckDB. AI-assisted development, interest in learning SQLMesh and frequent historical label backfills outweigh dbt familiarity. Earlier dbt-leaning advice is superseded. SQLMesh 0.236.4 and DuckDB 1.5.6 are now installed and pinned; the first synthetic label/backfill acceptance test passes.
 
+Cloud-backend follow-up (2026-11-20): MotherDuck Lite is selected for v1 while retaining SQLMesh and DuckDB dialect. Local DuckDB is still the implemented pilot. [Backend decision](BACKEND_DECISION.md) owns benchmark and portability requirements; DuckLake is a future option.
+
 ## Decision
 
 Use native SQLMesh models with DuckDB initially. SQLMesh owns model dependencies, plans, model versions, interval execution and audits. Project-specific code owns ingestion, evidence normalization, label resolution and determining which history a source-data correction affects. Do not build a custom modeling orchestrator; retries, dependency invalidation, interval state, concurrent execution and reproducible publication would become our long-term maintenance responsibility. AI assistance helps implement these systems but does not remove their correctness obligations. DuckDB remains an initial execution engine, not a permanent warehouse commitment.

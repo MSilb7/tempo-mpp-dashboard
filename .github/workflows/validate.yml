@@ -42,3 +42,17 @@ jobs:
           .local/venv/bin/python -m analytics.cli --home .local/ci-labels init-demo
           .local/venv/bin/python -m analytics.cli --home .local/ci-labels add-label analytics/fixtures/historical_label.json
           .local/venv/bin/python -m analytics.cli --home .local/ci-labels resume
+
+  container-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Build portable runner without secrets
+        run: docker build --platform linux/amd64 -t tempo-analytics:ci .
+      - name: Validate image offline
+        run: |
+          docker run --rm --network none tempo-analytics:ci unittest discover -s analytics/tests -v
+          docker run --rm --network none tempo-analytics:ci analytics.benchmark --home /data/smoke --days 3 --services 2 --payments-per-day 4 --execute

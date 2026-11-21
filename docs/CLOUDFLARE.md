@@ -2,6 +2,10 @@
 
 On 2026-11-18 the newly connected Cloudflare connector successfully performed authenticated read-only account discovery and R2 bucket, D1 database and Workers script listings. This confirms read access for those API routes. It does not establish write permissions, billing readiness, production capacity or a deployed project. No resources were created or changed. Account identifiers, inventory and authenticated response payloads are intentionally absent from this public repository.
 
+## Backend decision update — 2026-11-20
+
+MotherDuck Lite is now selected for v1 analytics, superseding the open backend comparison below. Cloudflare orchestration plus a portable SQLMesh Linux container remains the proposed execution path; state-database provider and exact Cloudflare products remain open. See [benchmark and portability requirements](BACKEND_DECISION.md). No infrastructure has been provisioned. The adapter and portable image definition now exist; [RUNNER.md](RUNNER.md) separates offline validation from outstanding image/remote acceptance.
+
 ## Proposed role
 
 The [platform plan](DATA_PLATFORM.md) proposes R2 for durable evidence and versioned artifacts, with Workers and optionally D1 for a compact serving layer. These are architectural candidates. The current Python/Node execution environment remains local; there is no Cloudflare deployment configuration or cloud scheduler in this repository.

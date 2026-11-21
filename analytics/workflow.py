@@ -12,10 +12,10 @@ from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
-import duckdb
 from sqlmesh import Context
 
 from analytics.audits import audit_models
+from analytics.backend import Backend, connect, table_count, assert_fresh
 from analytics.config import make_config
 from analytics.schema import create_raw
 
@@ -30,25 +30,23 @@ def locked(home):
     home.mkdir(parents=True, exist_ok=True)
     with (home / "writer.lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
+        backend = Backend.from_env(home)
+        backend.require_execution()
+        backend.bind(home)
         yield home
 
-
-def connect(home):
-    db = duckdb.connect(str(home / "warehouse.duckdb"))
-    db.execute("SET TimeZone='UTC'")
-    return db
 
 
 @contextmanager
 def mesh(home):
     start = "2026-01-01"
     with connect(home) as db:
-        if is_snapshot_store(db):
-            start = db.execute("SELECT min(event_date) FROM raw.calendar").fetchone()[0].isoformat()
-        else:
+        start = db.execute("SELECT min(event_date) FROM raw.calendar").fetchone()[0].isoformat()
+        if not is_snapshot_store(db):
             # Additive compatibility for synthetic warehouses from the first pilot.
             db.execute("ALTER TABLE raw.transfers ADD COLUMN IF NOT EXISTS client_fingerprint VARCHAR")
             db.execute("ALTER TABLE raw.transfers ADD COLUMN IF NOT EXISTS interface_status VARCHAR DEFAULT 'absent'")
+    Backend.from_env(home).require_execution()
     ctx = Context(paths=PROJECT, config=make_config(home, start=start))
     try:
         yield ctx
@@ -57,7 +55,7 @@ def mesh(home):
 
 
 def is_snapshot_store(db):
-    return bool(db.execute("SELECT count(*) FROM information_schema.tables WHERE table_schema='raw' AND table_name='snapshots'").fetchone()[0])
+    return bool(table_count(db, table='snapshots'))
 
 
 def rows(db, sql):
@@ -99,8 +97,9 @@ def publish(home):
         if mismatch:
             raise ValueError("Raw fact preservation audit failed")
         audit_models(db, rows)
+        first_date, last_date = db.execute("SELECT min(event_date),max(event_date) FROM raw.calendar").fetchone()
         payload = {"schema_version": 1, "synthetic": True,
-            "coverage": {"from": "2026-01-01", "through": END, "scope": "synthetic fixture only"},
+            "coverage": {"from": first_date.isoformat(), "through": last_date.isoformat(), "scope": "synthetic fixture only"},
             "labels": rows(db, "SELECT * FROM raw.service_labels ORDER BY assertion_id"),
             "daily": rows(db, "SELECT * FROM tempo.daily_metrics ORDER BY event_date, token, category"),
             "rolling_7d": rows(db, "SELECT * FROM tempo.rolling_7d ORDER BY event_date, token, category")}
@@ -124,8 +123,7 @@ def publish(home):
 
 def init_demo(home):
     with locked(home) as home:
-        if (home / "warehouse.duckdb").exists():
-            raise ValueError("Database exists; choose a fresh directory (no destructive reset)")
+        assert_fresh(home)
         with connect(home) as db:
             create_raw(db)
             db.executemany("INSERT INTO raw.transfers (transfer_id,event_date,service_id,payer,token,amount_atomic,synthetic) VALUES (?,?,?,?,?,?,true)", [
@@ -214,10 +212,12 @@ def drain(home):
         return build_pending(home)
     if pending[0] is None:
         return None
+    with connect(home) as db:
+        execution = (db.execute("SELECT max(event_date) FROM raw.calendar").fetchone()[0] + timedelta(days=1)).isoformat()
     with mesh(home) as ctx:
-        ctx.plan("prod", execution_time=EXECUTION_TIME, no_prompts=True, auto_apply=True)
+        ctx.plan("prod", execution_time=execution, no_prompts=True, auto_apply=True)
         plan = ctx.plan("prod", start=pending[0].isoformat(), end=pending[1].isoformat(),
-            execution_time=EXECUTION_TIME, restate_models=["tempo.enriched_transfers"],
+            execution_time=execution, restate_models=["tempo.enriched_transfers"],
             no_prompts=True, auto_apply=True)
         if not plan.restatements:
             raise RuntimeError("Expected SQLMesh restatement was not scheduled")

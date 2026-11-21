@@ -1,0 +1,25 @@
+# Allowlist build context: never send ignored local evidence or credentials.
+**
+!Dockerfile
+!.dockerignore
+!analytics/
+!analytics/**
+!lib/
+!lib/**
+!scripts/
+!scripts/**
+!test/
+!test/**
+**/__pycache__/**
+**/.cache/**
+**/logs/**
+**/.env*
+**/*.duckdb*
+**/*.sqlite*
+**/*.parquet
+**/*.pem
+**/*.key
+**/*.log
+.local/**
+.private/**
+.git/**

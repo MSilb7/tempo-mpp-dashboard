@@ -1,3 +1,4 @@
+import os
 import argparse
 import json
 from pathlib import Path
@@ -6,7 +7,7 @@ from analytics.workflow import init_demo, ingest_label, resume
 from analytics.snapshots import load_snapshot
 
 parser = argparse.ArgumentParser(description="Local SQLMesh snapshot and label/backfill workflow")
-parser.add_argument("--home", type=Path, default=Path(".local/analytics"))
+parser.add_argument("--home", type=Path, default=Path(os.environ.get("TEMPO_ANALYTICS_DIR", ".local/analytics")))
 sub = parser.add_subparsers(dest="command", required=True)
 sub.add_parser("init-demo")
 add = sub.add_parser("add-label")

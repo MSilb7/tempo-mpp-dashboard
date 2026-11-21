@@ -10,13 +10,13 @@
 | Canonical evidence | Tempo JSON-RPC receipts + blocks | Reuse tested normalization; preserve both event indexes, finalized boundary and source. |
 | Larger historical backfill | Evaluate cryo logs + blocks | Standard RPC to Parquet, explicit throttles; Tempo compatibility and custom transaction fields untested. Fetch full receipts for candidate transactions before normalization. |
 | Raw durable storage | Local immutable files initially; private Cloudflare R2 bucket later | Replayable evidence independent of indexer/model versions. No cloud resource was provisioned. |
-| Analytical storage / compute | Partitioned Parquet + DuckDB on one scheduled runner | Cheap local development and columnar scans. Keep one writer; R2 is storage, not a shared writable DuckDB database. |
+| Analytical storage / compute | MotherDuck Lite for v1 (user selected 2026-11-20); local DuckDB for development | Adapter and benchmark harness implemented; real connectivity and representative sizing pending. Preserve portable R2 exports; see BACKEND_DECISION.md. |
 | Model orchestration | SQLMesh + DuckDB (user selected) | Frequent historical label corrections favor integrated plans and interval restatement. Native SQLMesh models installed and tested in the local synthetic pilot. See MODELING_DECISION.md. |
 | Dashboard serving | Versioned aggregate exports initially; Worker + D1 when needed | Keep dashboard queries small and indexed. D1 is not the raw-history warehouse. |
 
 [Framework decision](MODELING_DECISION.md): user selected SQLMesh with DuckDB on 2026-11-18. Frequent label backfills and AI-assisted development outweigh dbt familiarity. Use native SQLMesh models and a persistent model database, exporting publication artifacts separately; ordinary Parquet objects do not provide transactional table semantics. Keep custom code focused on domain-specific ingestion and evidence/label rules, not a replacement orchestration framework.
 
-Move compute to ClickHouse or a managed analytical engine only after measured history size, query latency or concurrent workloads exceed the single-runner design. Use R2 Iceberg/catalog capabilities later if multi-writer table management becomes necessary; they are not prerequisites for v1. Do not place a mutable `.duckdb` file in R2 and treat it as a multi-process database.
+MotherDuck Lite is now selected for v1, superseding the earlier local-first cloud-backend recommendation. DuckLake remains a future migration option; see [backend decision](BACKEND_DECISION.md). Use R2 Iceberg/catalog capabilities later if multi-writer table management becomes necessary; they are not prerequisites for v1. Do not place a mutable `.duckdb` file in R2 and treat it as a multi-process database.
 
 ## Source evaluation and operational limits
 
