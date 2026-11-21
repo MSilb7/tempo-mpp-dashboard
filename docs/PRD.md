@@ -74,3 +74,7 @@ A recurring discovery job should find exact public identifiers, trace them into 
 Target $0/month MotherDuck and inexpensive overall operation. Start with daily refresh, bounded history expansion and batched backfills. Serve validated precomputed publications; pause or slow refresh before overages. Paid usage/upgrades need approval and free-tier cutoff must be verified before unattended use. Before a larger MotherDuck subscription, compare a small persistent-disk VM with ordinary DuckDB/SQLMesh and explicit backup/restore/operations costs; DuckLake is a later fallback.
 
 The connection adapter, portable container definition and offline benchmark harness are implemented. The container build and network-disabled smoke passed CI. Remote compatibility and production sizing remain acceptance work, not deployment claims. See [runner setup](RUNNER.md).
+
+## System quality and improvement
+
+User requested end-to-end evaluation to support ongoing improvement. The first implementation provides offline acceptance from acquisition through audited publication and machine-readable diagnostics. Live canaries, scheduled repair agents and automatic merging are not enabled by this work; changes to metric semantics and ground truth remain explicit reviewed decisions.

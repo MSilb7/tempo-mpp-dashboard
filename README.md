@@ -12,6 +12,8 @@ Follow the [offline onboarding walkthrough](docs/START_HERE.md), then read the [
 
 For bounded multi-window jobs with durable resume and automatic SQLMesh imports, see [durable ingestion and recovery](docs/INGESTION.md).
 
+For the full offline system acceptance test and proposed improvement loop, see [evaluation](docs/EVALUATION.md).
+
 ## Ingestion and tests
 
 Requires Node.js 22 or newer. No install or build step.
