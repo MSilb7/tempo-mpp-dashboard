@@ -150,3 +150,5 @@ Both jobs passed in [CI run 44869402477](https://github.com/MSilb7/tempo-mpp-das
 Review fixed two false-positive paths: generic acquisition failures could satisfy the HTTP 402 rejection check, and an empty provenance list could pass an `all(...)` check. The synthetic bridge now reports the production parser's specific 402 outcome, while other errors fail the eval. Provenance must contain the expected two-page/two-row/one-candidate discovery record. Added negative controls for missing manifests and unrelated source errors. No transport reaches live services; CI container execution disables networking.
 
 Review validation passes 28 Python tests and 19 Node tests, offline ingestion, Node syntax, demo JSON, documentation links and whitespace checks. Only source, synthetic test fixtures and documentation are included; local eval reports, credentials and acquired data remain excluded.
+
+[PR #4](https://github.com/MSilb7/tempo-mpp-dashboard/pull/4) is the authoritative final remote CI and merge record, including the container eval. Earlier statements that the new CI hooks were unexecuted describe the initial local implementation checkpoint.
