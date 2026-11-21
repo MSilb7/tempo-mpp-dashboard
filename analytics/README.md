@@ -1,5 +1,7 @@
 # SQLMesh + DuckDB label pilot
 
+For the opt-in MotherDuck adapter, portable container and offline benchmark harness, see the [runner runbook](../docs/RUNNER.md). Local DuckDB remains the default; remote execution and provisioning are not enabled.
+
 Local, single-writer SQLMesh pipeline for synthetic demos **or verified ingestion snapshots in separate warehouses**. SQLMesh 0.236.4 and DuckDB 1.5.6 were tested with Python 3.13. Full resolved dependency versions are in `requirements.lock.txt`. The Node ingestion prototype remains dependency-free.
 
 From the repository root:

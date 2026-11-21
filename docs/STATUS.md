@@ -2,6 +2,12 @@
 
 2026-11-18: verified ingestion snapshots now load into SQLMesh with evidence manifests, MPP filtering and overlap-safe deduplication. The saved public sample was imported and an exact rerun left its publication unchanged. The synthetic label/backfill workflow also passes end-to-end. Bounded discovery and receipt ingestion also passed a small public live check. The dashboard remains synthetic; ingestion output is not connected to it. The project is registered in Codex. User confirmed MPP-tagged transfers as primary population, with broader Tempo as comparison; data ingestion/modeling/storage take priority over UX.
 
+## Selected v1 backend — 2026-11-20
+
+MotherDuck Lite is selected, retaining SQLMesh/DuckDB SQL and local DuckDB development. The connection adapter, portable container definition and opt-in synthetic benchmark harness are implemented; see [runner setup and limitations](RUNNER.md). Remote configuration/guards are tested offline, but actual MotherDuck/PostgreSQL compatibility remains unverified; container build and network-disabled smoke passed CI. No provisioning or remote benchmark occurred. Managed PostgreSQL state remains an optional configuration with no provider selected.
+
+Target MotherDuck spend is $0/month: daily refresh, bounded history and batched backfills, with approval before paid use/upgrades. Verify free-tier cutoff before unattended execution; environment opt-ins are not billing controls. Before a larger MotherDuck subscription, compare a small persistent-disk VM running ordinary DuckDB/SQLMesh, including backups and operations. DuckLake is a later fallback. [Backend decision](BACKEND_DECISION.md) owns acceptance and portability requirements. Review and CI acceptance are tracked in [PR #3](https://github.com/MSilb7/tempo-mpp-dashboard/pull/3); real remote connectivity remains a separate acceptance step.
+
 ## Onboarding and cloud readiness
 
 [Start here](START_HERE.md) runs ingestion, repeat import and historical labeling entirely offline; [system diagrams](ARCHITECTURE.md) show current boundaries and proposed cloud deployment. Cloudflare authenticated account/R2/D1/Workers read probes succeeded on 2026-11-18; nothing was provisioned. See [Cloudflare readiness](CLOUDFLARE.md). A side-chat convenience sample found nonzero client fingerprints in 5/14 selected MPP payments, but established originating interface in 0/14; this is research evidence, not a population estimate or implemented resolver.
@@ -39,7 +45,9 @@ User selected SQLMesh with DuckDB, prioritizing frequent historical label backfi
 
 ## Validation
 
-Checkpoint review adds nonblocking, read-only status inspection and sanitized RPC URL errors, with regression tests. Current local validation passes 19 Node and 16 Python tests. The PR and its final CI run are the remote verification record.
+Adapter/runner review: 23 Python and 19 Node tests pass; offline ingestion, demo JSON, JavaScript syntax and diff whitespace checks pass. MotherDuck/PostgreSQL calls were mocked only. Container build/smoke passed [CI run 44869402477](https://github.com/MSilb7/tempo-mpp-dashboard/actions/runs/44869402477), including network-disabled execution. No Docker/Podman runtime is available locally. See [runner acceptance steps](RUNNER.md).
+
+Checkpoint review adds nonblocking, read-only status inspection and sanitized RPC URL errors, with regression tests. Checkpoint validation passed 19 Node and 16 Python tests; the adapter follow-up now passes 22 Python tests. The PR and its final CI run are the remote verification record.
 
 Durable-checkpoint follow-up: 19 Node and 14 Python tests pass, including hard process exit after publication, discovery/acquisition/import interruption, overlap and explicit rescans, empty/pending coverage, metadata validation, source/reorg rejection and snapshot corruption. Live acquisition was not run. Documentation links, CLI help, offline fixture generation, JSON/syntax and whitespace checks passed.
 

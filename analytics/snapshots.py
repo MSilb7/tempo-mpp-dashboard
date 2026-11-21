@@ -10,6 +10,7 @@ import subprocess
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from analytics.backend import table_count
 from analytics.schema import create_raw
 from analytics.workflow import connect, is_snapshot_store, locked, mesh, publish
 
@@ -109,7 +110,7 @@ def load_snapshot(home, path):
     digest = hashlib.sha256(content.encode()).hexdigest()
     with locked(home) as home:
         with connect(home) as db:
-            tables = db.execute("SELECT count(*) FROM information_schema.tables WHERE table_schema='raw'").fetchone()[0]
+            tables = table_count(db)
             if tables and not is_snapshot_store(db):
                 raise ValueError("Demo/legacy warehouse cannot receive snapshots; use a separate fresh --home")
             if not tables:

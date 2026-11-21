@@ -113,3 +113,28 @@ The observed unresolved research fingerprint was omitted from the public documen
 Review validation: 19 Node and 16 Python tests pass, including the new concurrent status and RPC-redaction regressions. Offline ingestion, JSON/syntax checks, `pip check`, documentation file links and diff checks pass. File inventory excludes runtime artifacts; credential-pattern matches are intentional synthetic rejection-test URLs only.
 
 Remote publication and final CI/merge status are tracked in [PR #2](https://github.com/MSilb7/tempo-mpp-dashboard/pull/2).
+
+
+## MotherDuck Lite decision handoff — 2026-11-20
+
+User selected MotherDuck Lite for v1, retaining SQLMesh/DuckDB dialect and keeping DuckLake as a future migration option. [Backend decision](BACKEND_DECISION.md) records the required incremental, historical-service and broad-taxonomy benchmarks, recovery/interval/publication checks, adapter/export/container portability and explicit upgrade boundary. Official MotherDuck pricing and SQLMesh MotherDuck integration documentation were checked during reconciliation; pricing is a dated reference, not benchmark evidence or a forecast. Managed PostgreSQL state remains a recommendation to validate, not a selected provider. No account setup, backend migration, provisioning or paid benchmark was performed. This update changes documentation only.
+
+
+## 2026-11-20 — Backend adapter and portable runner
+
+Implemented centralized local/MotherDuck connections, target-bound homes, current-catalog metadata checks, UTC SQLMesh configuration and optional separate PostgreSQL state. MotherDuck tests mock the driver and test opt-in rejection; they do not demonstrate real service compatibility. Local DuckDB remains the default. The PostgreSQL configuration test mocks the optional driver; the cloud requirements file installs it for actual image use.
+
+All 22 Python tests pass, including the existing snapshot overlap/process-recovery suite and a 16-day synthetic benchmark beyond the original demo bounds. The benchmark checks raw-fact invariance, independent metric audits, duplicate-label idempotency, failed-publication preservation, retry and persisted incremental intervals. Unavailable scan/rewrite/billing telemetry is null, not zero; local resource sampling records restrictions. These tiny fixtures establish correctness, not production sizing.
+
+Added a non-root Python 3.13/Node 22 container definition with an allowlisted build context and a network-disabled CI smoke job. Docker/Podman are unavailable locally; image build/run and the new CI job have not executed. No remote database connections, live acquisition, provisioning or paid benchmarks were performed. New execution documentation is in RUNNER.md; budget and fallback decisions are maintained in BACKEND_DECISION.md.
+
+Remaining offline checks also pass: 19 Node tests, synthetic ingestion, demo JSON parsing, app syntax and diff whitespace. No live artifacts or credentials were added to the implementation/build context.
+
+
+## Adapter/container review — 2026-11-21
+
+Review removed an extra restatement from the incremental benchmark: normal refresh now uses SQLMesh run and a second no-op refresh verifies byte-identical publication. SQLMesh's NOTHING_TO_DO result is accepted as a successful retry. Failed session setup now closes the acquired database connection, with a mocked credential-safe regression. State documentation specifies an isolated state database per analytical target. MotherDuck/PostgreSQL tests remain offline/mocked; no paid or live warehouse benchmark was run. Container acceptance is gated on the PR's network-disabled smoke job.
+
+Review validation passes 23 Python tests and 19 Node tests, offline ingestion, JSON/app syntax and diff whitespace checks. The reviewed Git file inventory contains source, synthetic fixtures/tests and documentation only; credential-signature checks found no real secrets.
+
+Both jobs passed in [CI run 44869402477](https://github.com/MSilb7/tempo-mpp-dashboard/actions/runs/44869402477) for commit `1dde2ec`: offline validation/onboarding and container build plus network-disabled Python tests and synthetic benchmark. This supersedes the earlier image-unverified status. PR #3 records final CI/merge status. Remote MotherDuck/PostgreSQL connectivity remains untested.
