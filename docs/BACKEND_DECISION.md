@@ -45,4 +45,4 @@ Before purchasing a larger MotherDuck plan, compare a small cloud VM running ord
 
 ## Implementation checkpoint
 
-The adapter, container definition and offline benchmark harness now exist; see [RUNNER.md](RUNNER.md). Local tests validate target isolation, explicit remote guards, date bounds beyond the demo, relabel/retry/recovery and persisted SQLMesh intervals. No actual MotherDuck/PostgreSQL connection or paid benchmark has run. Docker is unavailable locally, so image build/smoke is a newly added, not-yet-run CI job. Representative remote sizing, free-tier controls and cloud single-writer/recovery acceptance remain outstanding.
+The adapter, container definition and offline benchmark harness now exist; see [RUNNER.md](RUNNER.md). Local tests validate target isolation, explicit remote guards, date bounds beyond the demo, relabel/retry/recovery and persisted SQLMesh intervals. No actual MotherDuck/PostgreSQL connection or paid benchmark has run. Docker is unavailable locally; image build and network-disabled smoke passed GitHub Actions on 2026-11-21. Representative remote sizing, free-tier controls and cloud single-writer/recovery acceptance remain outstanding.

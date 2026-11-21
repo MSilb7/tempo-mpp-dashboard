@@ -4,7 +4,7 @@
 
 ## Selected cloud target
 
-MotherDuck Lite is the selected v1 analytical backend; SQLMesh and DuckDB dialect remain. Proposed execution uses Cloudflare orchestration and a portable Linux container, with validated publications as the serving boundary. A managed PostgreSQL state connection needs validation/provider selection. [Backend decision](BACKEND_DECISION.md) defines required scale/backfill/recovery benchmarks and portable backend boundaries; a small VM with ordinary DuckDB is the first alternative before a larger subscription, with DuckLake a later option. The adapter and portable container definition are implemented, with offline configuration and local benchmark tests. Real MotherDuck/PostgreSQL connections, container execution and cloud deployment remain unverified. See [runner runbook](RUNNER.md).
+MotherDuck Lite is the selected v1 analytical backend; SQLMesh and DuckDB dialect remain. Proposed execution uses Cloudflare orchestration and a portable Linux container, with validated publications as the serving boundary. A managed PostgreSQL state connection needs validation/provider selection. [Backend decision](BACKEND_DECISION.md) defines required scale/backfill/recovery benchmarks and portable backend boundaries; a small VM with ordinary DuckDB is the first alternative before a larger subscription, with DuckLake a later option. The adapter and portable container definition are implemented, with offline configuration and local benchmark tests. Container build and network-disabled execution passed CI on 2026-11-21. Real MotherDuck/PostgreSQL connections and cloud deployment remain unverified. See [runner runbook](RUNNER.md).
 
 ## Current implementation
 

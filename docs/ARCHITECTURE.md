@@ -95,7 +95,7 @@ flowchart LR
     API -.-> DASH[Dashboard]
 ```
 
-MotherDuck Lite is the selected v1 analytical backend. Its connection adapter and portable container definition are implemented, but remote connectivity and image execution are unverified; see [runner runbook](RUNNER.md). [Backend decision](BACKEND_DECISION.md) defines its benchmark and portability gates. R2, an optional D1 serving layer, and Workers remain proposed surrounding components, not deployed infrastructure. Compute, scheduling, production SQLMesh state, locking, backups and publication policy must be selected before implementation. Do not treat an object-store DuckDB file as a shared writable database. Full local publications include evidence; a separate approved public projection is required before publishing. See [Cloudflare readiness](CLOUDFLARE.md).
+MotherDuck Lite is the selected v1 analytical backend. Its connection adapter and portable container definition are implemented, and image build/offline execution passed CI; remote connectivity remains unverified; see [runner runbook](RUNNER.md). [Backend decision](BACKEND_DECISION.md) defines its benchmark and portability gates. R2, an optional D1 serving layer, and Workers remain proposed surrounding components, not deployed infrastructure. Compute, scheduling, production SQLMesh state, locking, backups and publication policy must be selected before implementation. Do not treat an object-store DuckDB file as a shared writable database. Full local publications include evidence; a separate approved public projection is required before publishing. See [Cloudflare readiness](CLOUDFLARE.md).
 
 ## Implemented portable execution boundary
 

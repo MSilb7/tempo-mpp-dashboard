@@ -1,6 +1,6 @@
 # Backend adapter, portable runner and benchmarks
 
-Implemented locally on 2026-11-20; **MotherDuck connectivity and image execution remain unverified in this workstation environment**. No MotherDuck/PostgreSQL connection, provisioning or paid benchmark has been performed. [Backend decision](BACKEND_DECISION.md) owns product, cost and migration requirements.
+Implemented on 2026-11-20; reviewed on 2026-11-21. **Container build and network-disabled smoke passed CI; MotherDuck connectivity remains unverified**. No MotherDuck/PostgreSQL connection, provisioning or paid benchmark has been performed. [Backend decision](BACKEND_DECISION.md) owns product, cost and migration requirements.
 
 ## Local DuckDB remains the default
 
@@ -40,7 +40,7 @@ The image combines Python 3.13, Node 22 and pinned dependencies. It runs as non-
 
 `/data` contains writable state/publications; `TEMPO_ANALYTICS_DIR=/data/analytics` is the workflow default. Use a persistent, correctly owned volume for retained runs. For example, mount a local directory writable by UID 10001 at `/data`, then run `analytics.cli init-demo`. A disposable smoke volume is not a backup strategy. The image's entrypoint is `python -m`, so `analytics.cli`, `analytics.ingestion` and `analytics.benchmark` are module arguments.
 
-Docker/Podman are unavailable on this workstation; image build/run are added as a CI job but have not yet executed for these uncommitted changes. Cloud scheduling, shared checkpoint persistence, R2 upload, global writer coordination, publication-pointer updates and state backups are not provisioned by this Dockerfile. Preserve last-good publication and state/data consistency when implementing those pieces.
+Docker/Podman are unavailable on this workstation. Image build and network-disabled test/benchmark execution passed [CI run 44869402477](https://github.com/MSilb7/tempo-mpp-dashboard/actions/runs/44869402477); [PR #3](https://github.com/MSilb7/tempo-mpp-dashboard/pull/3) tracks the reviewed changes. Cloud scheduling, shared checkpoint persistence, R2 upload, global writer coordination, publication-pointer updates and state backups are not provisioned by this Dockerfile. Preserve last-good publication and state/data consistency when implementing those pieces.
 
 ## Benchmark harness
 
@@ -65,4 +65,4 @@ Remote execution additionally requires `--allow-remote` plus all adapter opt-ins
 
 ## Next acceptance steps
 
-First run the image smoke in CI. Then validate compatible MotherDuck versions, free-tier cutoff and serialized runner/storage design before any authorized connectivity test. Default deployment intent is daily refresh, bounded history and batched backfills, serving precomputed publications. Pause or slow updates before overages. Before purchasing a larger MotherDuck plan, compare a small persistent-disk VM running SQLMesh + ordinary DuckDB, including measured backfill speed, backups, restore testing and operating work. DuckLake is a later fallback.
+The image smoke passed CI. Next validate compatible MotherDuck versions, free-tier cutoff and serialized runner/storage design before any authorized connectivity test. Default deployment intent is daily refresh, bounded history and batched backfills, serving precomputed publications. Pause or slow updates before overages. Before purchasing a larger MotherDuck plan, compare a small persistent-disk VM running SQLMesh + ordinary DuckDB, including measured backfill speed, backups, restore testing and operating work. DuckLake is a later fallback.

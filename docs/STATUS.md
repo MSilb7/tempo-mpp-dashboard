@@ -4,9 +4,9 @@
 
 ## Selected v1 backend — 2026-11-20
 
-MotherDuck Lite is selected, retaining SQLMesh/DuckDB SQL and local DuckDB development. The connection adapter, portable container definition and opt-in synthetic benchmark harness are implemented; see [runner setup and limitations](RUNNER.md). Remote configuration/guards are tested offline, but actual MotherDuck/PostgreSQL compatibility and container execution remain unverified. No provisioning or remote benchmark occurred. Managed PostgreSQL state remains an optional configuration with no provider selected.
+MotherDuck Lite is selected, retaining SQLMesh/DuckDB SQL and local DuckDB development. The connection adapter, portable container definition and opt-in synthetic benchmark harness are implemented; see [runner setup and limitations](RUNNER.md). Remote configuration/guards are tested offline, but actual MotherDuck/PostgreSQL compatibility remains unverified; container build and network-disabled smoke passed CI. No provisioning or remote benchmark occurred. Managed PostgreSQL state remains an optional configuration with no provider selected.
 
-Target MotherDuck spend is $0/month: daily refresh, bounded history and batched backfills, with approval before paid use/upgrades. Verify free-tier cutoff before unattended execution; environment opt-ins are not billing controls. Before a larger MotherDuck subscription, compare a small persistent-disk VM running ordinary DuckDB/SQLMesh, including backups and operations. DuckLake is a later fallback. [Backend decision](BACKEND_DECISION.md) owns acceptance and portability requirements. Review and CI acceptance are tracked in the adapter/container PR; real remote connectivity remains a separate acceptance step.
+Target MotherDuck spend is $0/month: daily refresh, bounded history and batched backfills, with approval before paid use/upgrades. Verify free-tier cutoff before unattended execution; environment opt-ins are not billing controls. Before a larger MotherDuck subscription, compare a small persistent-disk VM running ordinary DuckDB/SQLMesh, including backups and operations. DuckLake is a later fallback. [Backend decision](BACKEND_DECISION.md) owns acceptance and portability requirements. Review and CI acceptance are tracked in [PR #3](https://github.com/MSilb7/tempo-mpp-dashboard/pull/3); real remote connectivity remains a separate acceptance step.
 
 ## Onboarding and cloud readiness
 
@@ -45,7 +45,7 @@ User selected SQLMesh with DuckDB, prioritizing frequent historical label backfi
 
 ## Validation
 
-Adapter/runner follow-up: 22 Python and 19 Node tests pass; offline ingestion, demo JSON, JavaScript syntax and diff whitespace checks pass. MotherDuck/PostgreSQL calls were mocked only. Container build/smoke is configured in CI but unexecuted locally because no Docker/Podman runtime is available. See [runner acceptance steps](RUNNER.md).
+Adapter/runner review: 23 Python and 19 Node tests pass; offline ingestion, demo JSON, JavaScript syntax and diff whitespace checks pass. MotherDuck/PostgreSQL calls were mocked only. Container build/smoke passed [CI run 44869402477](https://github.com/MSilb7/tempo-mpp-dashboard/actions/runs/44869402477), including network-disabled execution. No Docker/Podman runtime is available locally. See [runner acceptance steps](RUNNER.md).
 
 Checkpoint review adds nonblocking, read-only status inspection and sanitized RPC URL errors, with regression tests. Checkpoint validation passed 19 Node and 16 Python tests; the adapter follow-up now passes 22 Python tests. The PR and its final CI run are the remote verification record.
 
