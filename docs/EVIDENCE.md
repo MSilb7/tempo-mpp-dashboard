@@ -138,3 +138,15 @@ Review removed an extra restatement from the incremental benchmark: normal refre
 Review validation passes 23 Python tests and 19 Node tests, offline ingestion, JSON/app syntax and diff whitespace checks. The reviewed Git file inventory contains source, synthetic fixtures/tests and documentation only; credential-signature checks found no real secrets.
 
 Both jobs passed in [CI run 44869402477](https://github.com/MSilb7/tempo-mpp-dashboard/actions/runs/44869402477) for commit `1dde2ec`: offline validation/onboarding and container build plus network-disabled Python tests and synthetic benchmark. This supersedes the earlier image-unverified status. PR #3 records final CI/merge status. Remote MotherDuck/PostgreSQL connectivity remains untested.
+
+
+## Offline system eval — 2026-11-21
+
+`analytics.evaluate` passes all 14 named checks on synthetic transport responses through production discovery pagination, receipt parsing, checkpoints, snapshot import, SQLMesh and publication. A separate negative-control test corrupts the published payment count and confirms the eval reports failure. Remote-backend execution is rejected before acquisition. The complete local suite passes 26 Python and 19 Node tests; Node syntax, demo JSON and whitespace checks pass. The new explicit CI eval steps are local changes and have not run remotely. No live requests, paid benchmarks, provisioning, scheduled jobs or autonomous code changes were enabled. See EVALUATION.md for scope and the proposed reviewed improvement loop.
+
+
+## End-to-end eval review — 2026-11-21
+
+Review fixed two false-positive paths: generic acquisition failures could satisfy the HTTP 402 rejection check, and an empty provenance list could pass an `all(...)` check. The synthetic bridge now reports the production parser's specific 402 outcome, while other errors fail the eval. Provenance must contain the expected two-page/two-row/one-candidate discovery record. Added negative controls for missing manifests and unrelated source errors. No transport reaches live services; CI container execution disables networking.
+
+Review validation passes 28 Python tests and 19 Node tests, offline ingestion, Node syntax, demo JSON, documentation links and whitespace checks. Only source, synthetic test fixtures and documentation are included; local eval reports, credentials and acquired data remain excluded.

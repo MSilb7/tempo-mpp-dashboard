@@ -33,6 +33,8 @@ jobs:
           node scripts/demo-ingestion.mjs
       - name: Validate analytics and preview boundaries
         run: .local/venv/bin/python -m unittest discover -s analytics/tests -v
+      - name: Evaluate the complete offline pipeline
+        run: .local/venv/bin/python -m analytics.evaluate --report .local/system-eval.json
       - name: Exercise onboarding and repeat import
         run: |
           .local/venv/bin/python -m analytics.cli --home .local/ci-snapshots load-snapshot .local/synthetic-ingestion.json
@@ -55,4 +57,5 @@ jobs:
       - name: Validate image offline
         run: |
           docker run --rm --network none tempo-analytics:ci unittest discover -s analytics/tests -v
+          docker run --rm --network none tempo-analytics:ci analytics.evaluate
           docker run --rm --network none tempo-analytics:ci analytics.benchmark --home /data/smoke --days 3 --services 2 --payments-per-day 4 --execute

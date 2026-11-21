@@ -62,3 +62,7 @@ Python integration suite passed (3 tests), including actual SQLMesh source-only 
 `node --test test/*.test.mjs` passed (17 tests). Offline ingestion, demo JSON parsing and JavaScript syntax checks passed. Committed-code test fixtures are synthetic. Live anonymous probes: SQL indexer returned 402 (stopped, no payment); transfers REST returned 200; RPC chain ID matched. New discovery CLI found two candidate transactions in a fixed two-block sample; receipt CLI verified both into six canonical movements. Local snapshots remain ignored in `.local/` and are not publishable fixtures. This validates a small sample, not history completeness or indexer scale. No paid jobs, private records or transactions were used. Production browser validation remains outstanding; UI unchanged.
 
 The initial ingestion/SQLMesh implementation and review are tracked in [PR #1](https://github.com/MSilb7/tempo-mpp-dashboard/pull/1). The walkthrough targets `main` for the merged result. No deployment or cloud provisioning is included.
+
+## System eval — 2026-11-21
+
+Added a deterministic offline end-to-end acceptance eval through real discovery/receipt parsing, checkpoints, SQLMesh and audited publication. Structured results, golden totals, rerun/overlap checks, label recovery and HTTP 402 rejection are covered. CI hooks run the eval locally and in the network-disabled container; these new hooks have not yet run remotely. See [evaluation and improvement loop](EVALUATION.md). No live canary or autonomous repair agent is enabled.
