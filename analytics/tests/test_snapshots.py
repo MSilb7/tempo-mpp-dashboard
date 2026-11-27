@@ -113,6 +113,40 @@ class SnapshotTests(unittest.TestCase):
             self.assertEqual(sum(r['payment_count'] for r in out['daily']),2)
             self.assertIsNone(resume(home))
 
+    def test_funding_and_provider_legs_are_gross_flows_not_tool_call_counts(self):
+        # Entirely invented values/IDs. One funding leg plus ten provider legs,
+        # with unrelated untagged movements and a burn kept as evidence.
+        universe = [{'id':1,'day':1,'amount':'1000','extraMovements':[
+            {'amount':'1000'}, {'amount':'1000','movement':'burn'}, {'amount':'7'}]}]
+        universe += [{'id':i,'day':2,'amount':'100','extraMovements':[{'amount':'3'}]}
+                     for i in range(2,12)]
+        with tempfile.TemporaryDirectory() as directory:
+            folder=Path(directory); home=folder/'warehouse'
+            data=snapshot(ids=list(range(1,12)),universe=universe)
+            path=save(folder,data)
+            load_snapshot(home,path)
+            out=json.loads((home/'latest.json').read_text())
+            self.assertEqual(len(out['transfer_evidence']),24)
+            evidence=out['transfer_evidence']
+            self.assertEqual(sum(r['transfer']['movement']=='burn' for r in evidence),1)
+            self.assertEqual(sum(r['included_in_mpp_metrics'] for r in evidence),11)
+            self.assertTrue(all(not r['included_in_mpp_metrics'] for r in evidence
+                                if r['transfer']['attribution']['status']=='absent'))
+            self.assertEqual([(str(r['event_date']),r['payment_count'],int(r['amount_atomic']))
+                              for r in out['daily']],
+                             [('2026-01-01',1,1000),('2026-01-02',10,1000)])
+            self.assertEqual(sum(r['payment_count'] for r in out['daily']),11)
+            self.assertEqual(sum(int(r['amount_atomic']) for r in out['daily']),2000)
+            with connect(home) as db:
+                self.assertEqual(db.execute('SELECT count(*) FROM raw.transfers').fetchone()[0],11)
+            prior=(home/'latest.json').read_bytes()
+            load_snapshot(home,path)
+            self.assertEqual((home/'latest.json').read_bytes(),prior)
+            load_snapshot(home,save(folder,snapshot(ids=list(range(2,12)),universe=universe)))
+            overlapped=json.loads((home/'latest.json').read_text())
+            self.assertEqual(overlapped['daily'],out['daily'])
+            self.assertEqual(overlapped['rolling_7d'],out['rolling_7d'])
+
 
 if __name__ == '__main__':
     unittest.main()

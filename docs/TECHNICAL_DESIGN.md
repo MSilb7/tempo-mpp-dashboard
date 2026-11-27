@@ -81,3 +81,7 @@ Status queries use a read-only SQLite transaction without the acquisition writer
 ## System acceptance
 
 `analytics.evaluate` replaces external transport with synthetic responses while running production discovery/receipt parsing, acquisition, replay/import, modeling and publication. Fixed expected totals plus a negative-control test provide an independent acceptance signal. Reports expose named failures for future agent-proposed improvements. [Evaluation contract](EVALUATION.md) distinguishes offline coverage from live/cloud/UI acceptance and defines the reviewed improvement loop.
+
+## Known-case replay boundary
+
+A user-supplied funding transaction can be checked alongside operator-reported provider-payment references. Verify each reference against chain receipts, keeping the operator's node-to-payment mapping distinct from chain facts. Funding and provider legs both contribute to gross MPP flow; neither payment-leg count nor gross volume is a tool-call count or customer-spend metric. Untagged transfers and burns remain evidence with existing population exclusions. Saved live cases stay private; CI uses invented receipt patterns and independent expected counts.

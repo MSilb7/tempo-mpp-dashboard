@@ -152,3 +152,15 @@ Review fixed two false-positive paths: generic acquisition failures could satisf
 Review validation passes 28 Python tests and 19 Node tests, offline ingestion, Node syntax, demo JSON, documentation links and whitespace checks. Only source, synthetic test fixtures and documentation are included; local eval reports, credentials and acquired data remain excluded.
 
 [PR #4](https://github.com/MSilb7/tempo-mpp-dashboard/pull/4) is the authoritative final remote CI and merge record, including the container eval. Earlier statements that the new CI hooks were unexecuted describe the initial local implementation checkpoint.
+
+## Known-case free live ingestion
+
+Read-only cached operator history identified a retained workflow, and the user supplied its original funding transaction. Free public Tempo RPC verified the selected funding/provider receipts; a bounded three-block REST discovery job around the funding transaction reached local SQLMesh publication. Exact snapshot/job reruns preserved publication bytes; a narrower overlapping discovery job preserved daily and rolling metrics. The private replay checker validates operator-reported addresses/tokens against receipts, observed atomic baselines, population exclusions and conservative coverage. It does not independently verify token decimals, service delivery or chain-wide completeness.
+
+All acquired identifiers, responses, expectations, raw amounts and reports remain ignored local artifacts. The repository change adds an entirely invented funding-plus-provider receipt pattern with unrelated untagged transfers and a burn, plus idempotency/overlap assertions. No paid job, credential change, cloud provisioning or public publication occurred.
+
+Validation: the complete local suite passes 29 Python tests and 19 Node tests, including the new synthetic receipt-pattern regression. Private saved-evidence replay checks pass, and changed public sources were checked for acquired transaction/address identifiers and credential signatures. Changes remain local/uncommitted; no new CI run or deployment is claimed.
+
+Review follow-up: the synthetic regression independently checks funding-day versus provider-day totals, retained burn evidence, excluded untagged movements and stable daily/rolling metrics after overlapping imports. The isolated PR passes 29 Python and 19 Node tests, JSON/syntax, offline ingestion and whitespace checks. A scan against private acquired identifiers found no matches in the six public source/documentation files. Seeded-experiment work from another session is excluded from this PR.
+
+[PR #5](https://github.com/MSilb7/tempo-mpp-dashboard/pull/5) records review, final CI and merge status for the synthetic funding/provider regression. Private evidence remains outside Git.
