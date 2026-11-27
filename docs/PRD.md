@@ -78,3 +78,7 @@ The connection adapter, portable container definition and offline benchmark harn
 ## System quality and improvement
 
 User requested end-to-end evaluation to support ongoing improvement. The first implementation provides offline acceptance from acquisition through audited publication and machine-readable diagnostics. Live canaries, scheduled repair agents and automatic merging are not enabled by this work; changes to metric semantics and ground truth remain explicit reviewed decisions.
+
+## Known workflow validation
+
+Use a user-known workflow as a private acceptance case for ingestion and decoding, retaining independent evidence levels for chain payments and operator-reported tool execution. Validate the funding leg and downstream provider legs separately. Do not equate summed payment legs with successful tool calls or customer spending. Public regression fixtures must remain synthetic.

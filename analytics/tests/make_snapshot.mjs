@@ -20,6 +20,12 @@ for (const spec of universe) {
   else if (spec.memo === 'other') logs[1].topics[3] = hash(12);
   else if (spec.client) logs[1].topics[3] = memo.slice(0, 32) + 'ef'.repeat(10) + memo.slice(52);
   if (spec.movement === 'mint') for (const log of logs) log.topics[1] = hash(0);
+  for (const extra of spec.extraMovements ?? []) {
+    const log = f.log(logs.length, false, BigInt(extra.amount));
+    Object.assign(log, { transactionHash: hash(spec.id), blockNumber: number, blockHash });
+    if (extra.movement === 'burn') log.topics[2] = hash(0);
+    logs.push(log);
+  }
   if (spec.failed) logs.length = 0;
   receipts.set(hash(spec.id), { transactionHash: hash(spec.id), blockNumber: number, blockHash,
     status: spec.failed ? '0x0' : '0x1', logs });
