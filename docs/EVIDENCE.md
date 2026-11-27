@@ -162,3 +162,5 @@ All acquired identifiers, responses, expectations, raw amounts and reports remai
 Validation: the complete local suite passes 29 Python tests and 19 Node tests, including the new synthetic receipt-pattern regression. Private saved-evidence replay checks pass, and changed public sources were checked for acquired transaction/address identifiers and credential signatures. Changes remain local/uncommitted; no new CI run or deployment is claimed.
 
 Review follow-up: the synthetic regression independently checks funding-day versus provider-day totals, retained burn evidence, excluded untagged movements and stable daily/rolling metrics after overlapping imports. The isolated PR passes 29 Python and 19 Node tests, JSON/syntax, offline ingestion and whitespace checks. A scan against private acquired identifiers found no matches in the six public source/documentation files. Seeded-experiment work from another session is excluded from this PR.
+
+[PR #5](https://github.com/MSilb7/tempo-mpp-dashboard/pull/5) records review, final CI and merge status for the synthetic funding/provider regression. Private evidence remains outside Git.

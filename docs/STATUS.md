@@ -70,3 +70,5 @@ Added a deterministic offline end-to-end acceptance eval through real discovery/
 ## Known-case live validation
 
 A bounded free REST/RPC run around a user-supplied finalized transaction now passes discovery, receipt parsing, checkpoints, SQLMesh and local publication. Separately selected related provider receipts were verified and imported with explicit operator-reported linkage. Exact reruns and overlapping-range imports preserve metrics. Private receipts, expectations and a replay report remain in ignored `.local/known-job/`; none are publishable fixtures. A synthetic funding/provider-leg regression preserves the accounting lesson without acquired identifiers or values. No cloud deployment or paid job was run.
+
+[PR #5](https://github.com/MSilb7/tempo-mpp-dashboard/pull/5) records review, final CI and merge status for the synthetic funding/provider regression. Private evidence remains outside Git.
